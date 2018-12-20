@@ -76,7 +76,6 @@ Polynom<T> Polynom<T>::operator -(const Polynom<T>& other) const {
 template <typename T>
 Polynom<T> Polynom<T>::operator *(const Polynom<T>& other) const {
 	Polynom<T> result;
-	//for (auto it = this->polynom.begin(); it != this->polynom.end(); ++it)
 	for (auto it : this->polynom)
 		for (auto jt : other.polynom)
 			result.addMonom(it.second * jt.second, it.first + jt.first);
@@ -146,7 +145,7 @@ void Polynom<T>::addMonom(const T& coef, const unsigned& degree) {
 	else
 		this->polynom[degree] = coef;
 
-	if (polynom[degree] == T(0)) {
+	if (this->polynom[degree] == T(0)) {
 		auto it = this->polynom.find(degree);
 		this->polynom.erase(it);
 	}
@@ -156,26 +155,26 @@ void Polynom<T>::addMonom(const T& coef, const unsigned& degree) {
 template <typename T>
 Polynom<T> Polynom<T>::derivative() const {
 	Polynom<T> result;
-	for (auto it = this->polynom.begin(); it != this->polynom.end(); ++it)
-		if (0 != it->first)
-			result.addMonom(it->second * it->first, it->first - 1);
+	for (auto it : this->polynom)
+		if (0 != it.first)
+			result.addMonom(it.second * it.first, it.first - 1);
 	return result;
 }
 
 // ===== Значение функции в точке =====
 template <typename T>
 T Polynom<T>::atX(const T& num) const {
-	if ( this->polynom.empty() )
+	if (this->polynom.empty())
 		return T(0);
 	T result(0), pw_val;
-	for (auto it = this->polynom.begin(); it != this->polynom.end(); ++it) {
-		if (0 != it->first)
+	for (auto it : this->polynom) {
+		if (0 != it.first)
 			pw_val = num;
 		else
 			pw_val = 1;
-		for (int i = it->first - 1; i > 0; --i)
+		for (int i = it.first - 1; i > 0; --i)
 			pw_val = pw_val * num;
-		result = result + pw_val * it->second;
+		result = result + pw_val * it.second;
 	}
 	return result;
 }
@@ -184,16 +183,16 @@ T Polynom<T>::atX(const T& num) const {
 template <typename T>
 Polynom<T> Polynom<T>::superposition(const Polynom<T>& inner) const {
 	Polynom<T> result;
-	for (auto it = this->polynom.begin(); it != this->polynom.end(); ++it) {
-		if (it->first > 0) {
+	for (auto it : this->polynom) {
+		if (it.first > 0) {
 			Polynom<T> grPol(inner), coefPol;
-			for (int i = it->first - 1; i > 0; --i)
+			for (int i = it.first - 1; i > 0; --i)
 				grPol = grPol * inner;
-			coefPol.addMonom(it->second, 0);
+			coefPol.addMonom(it.second, 0);
 			result = result + grPol * coefPol;
 		}
 		else
-			result.addMonom(it->second, 0);
+			result.addMonom(it.second, 0);
 	}
 	return result;
 }

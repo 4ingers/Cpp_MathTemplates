@@ -253,11 +253,11 @@ Matrix<dim, T> Matrix<dim, T>::inverse() const {
 	if (this->determinant() == 0)
 		throw inversion_error();
 
-	std::vector<std::vector<T> > mt(dim);
+	std::vector<std::vector<T> > transit(dim);
 	for (int i = 0; i < dim; ++i) {
-		mt[i].resize(dim);
+		transit[i].resize(dim);
 		for (int j = 0; j < dim; ++j)
-			mt[i][j] = this->cells[i][j];
+			transit[i][j] = this->cells[i][j];
 	}
 
 	std::vector<std::vector<T> > res(dim);
@@ -276,34 +276,34 @@ Matrix<dim, T> Matrix<dim, T>::inverse() const {
 		while (this->cells[tmp][i] == 0 && tmp < dim)
 			++tmp;
 		for (int j = 0; j < dim; ++j) {
-			T tmpMean = mt[i][j];
-			mt[i][j] = mt[tmp][j];
-			mt[tmp][j] = tmpMean;
+			T tmpMean = transit[i][j];
+			transit[i][j] = transit[tmp][j];
+			transit[tmp][j] = tmpMean;
 			tmpMean = res[i][j];
 			res[i][j] = res[tmp][j];
 			res[tmp][j] = tmpMean;
 		}
-		T tmpKoef = mt[i][i];
+		T tmpKoef = transit[i][i];
 		for (int j = 0; j < dim; ++j)	{
-			mt[i][j] = mt[i][j] / tmpKoef;
+			transit[i][j] = transit[i][j] / tmpKoef;
 			res[i][j] = res[i][j] / tmpKoef;
 		}
 		for (int k = i + 1; k < dim; ++k)	{
-			T koef = mt[k][i];
+			T koef = transit[k][i];
 			for (int j = 0; j < dim; ++j) {
-				mt[k][j] = mt[k][j] - mt[i][j] * koef;
+				transit[k][j] = transit[k][j] - transit[i][j] * koef;
 				res[k][j] = res[k][j] - res[i][j] * koef;
 			}
 		}
 	}
-	T tmpKoef = mt[dim - 1][dim - 1];
+	T tmpKoef = transit[dim - 1][dim - 1];
 	for (int j = 0; j < dim; ++j)	{
-		mt[dim - 1][j] = mt[dim - 1][j] / tmpKoef;
+		transit[dim - 1][j] = transit[dim - 1][j] / tmpKoef;
 		res[dim - 1][j] = res[dim - 1][j] / tmpKoef;
 	}
 	for (int i = dim - 1; i > 0; --i) {
 		for (int k = i - 1; k >= 0; --k) {
-			T koef = mt[k][i];
+			T koef = transit[k][i];
 			for (int j = 0; j < dim; ++j)
 				res[k][j] = res[k][j] - res[i][j] * koef;
 		}
